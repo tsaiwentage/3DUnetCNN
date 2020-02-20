@@ -57,6 +57,14 @@ def fetch_training_data_files():
 
 
 def main(overwrite=False):
+    # GPU config
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    import tensorflow as tf
+    from keras.backend.tensorflow_backend import set_session
+    config = tf.ConfigProto()
+    config.gpu_options.per_process_gpu_memory_fraction = 0.8
+    set_session(tf.Session(config=config))
+
     # convert input images into an hdf5 file
     if overwrite or not os.path.exists(config["data_file"]):
         training_files = fetch_training_data_files()
