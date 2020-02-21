@@ -61,9 +61,9 @@ def main(overwrite=False):
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     import tensorflow as tf
     from keras.backend.tensorflow_backend import set_session
-    config = tf.ConfigProto(allow_soft_placement=True)
-    config.gpu_options.per_process_gpu_memory_fraction = 0.8
-    set_session(tf.Session(config=config))
+    gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=0.8)
+    config=tf.ConfigProto(gpu_options=gpu_options)
+    session = tf.Session(config=config)
 
     # convert input images into an hdf5 file
     if overwrite or not os.path.exists(config["data_file"]):
