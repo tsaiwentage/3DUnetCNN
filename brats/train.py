@@ -61,7 +61,7 @@ def main(overwrite=False):
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     import tensorflow as tf
     from keras.backend.tensorflow_backend import set_session
-    config = tf.ConfigProto(allow_soft_placement=True, allow_soft_placement=True)
+    config = tf.ConfigProto(allow_soft_placement=True)
     config.gpu_options.per_process_gpu_memory_fraction = 0.8
     set_session(tf.Session(config=config))
 
