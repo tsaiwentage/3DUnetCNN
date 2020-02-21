@@ -59,7 +59,11 @@ def fetch_training_data_files():
 def main(overwrite=False):
     # GPU config
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-    import tensorflow as tf
+    
+    # import tensorflow as tf
+    import tensorflow.compat.v1 as tf
+    tf.disable_v2_behavior()
+
     from keras.backend.tensorflow_backend import set_session
     config = tf.ConfigProto()
     config.gpu_options.per_process_gpu_memory_fraction = 0.8
