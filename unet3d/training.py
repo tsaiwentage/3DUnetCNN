@@ -85,4 +85,5 @@ def train_model(model, model_file, training_generator, validation_generator, ste
                                                 learning_rate_patience=learning_rate_patience,
                                                 early_stopping_patience=early_stopping_patience),
                         validation_data=validation_generator,
-                        validation_steps=validation_steps)
+                        validation_steps=validation_steps,
+                        use_multiprocessing=True)
