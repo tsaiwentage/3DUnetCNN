@@ -85,6 +85,6 @@ def train_model(model, model_file, training_generator, validation_generator, ste
                                                 learning_rate_patience=learning_rate_patience,
                                                 early_stopping_patience=early_stopping_patience),
                         validation_data=validation_generator,
-                        validation_steps=validation_steps,
-                        workers=0)  # 新增，今天最后试一次 3.11晚
+                        validation_steps=validation_steps）
+                        # workers=0)  # 新增，今天最后试一次 3.11晚
                         # use_multiprocessing=True)  # 将两个validation放后，且增加multiprocessing
