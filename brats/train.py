@@ -14,7 +14,7 @@ config["patch_shape"] = (64, 64, 64)  # switch to None to train on the whole ima
 config["labels"] = (1, 2, 4)  # the label numbers on the input image
 config["n_labels"] = len(config["labels"])
 config["all_modalities"] = ["t1", "t1ce", "flair", "t2"]
-config["training_modalities"] = config["all_modalities"]  # change this if you want to only use some of the modalities
+config["training_modalities"] = config["all_modalities"]  # 使用全部模态 change this if you want to only use some of the modalities
 config["nb_channels"] = len(config["training_modalities"])
 if "patch_shape" in config and config["patch_shape"] is not None:
     config["input_shape"] = tuple([config["nb_channels"]] + list(config["patch_shape"]))
