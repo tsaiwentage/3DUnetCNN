@@ -12,10 +12,10 @@ config["image_shape"] = (128, 128, 128)  # This determines what shape the images
 config["patch_shape"] = None  # switch to None to train on the whole image
 config["labels"] = (1, 2, 4)  # the label numbers on the input image
 config["n_base_filters"] = 16
-config["n_labels"] = len(config["labels"])
+config["n_labels"] = len(config["labels"])  # =3
 config["all_modalities"] = ["t1", "t1ce", "flair", "t2"]
 config["training_modalities"] = config["all_modalities"]  # change this if you want to only use some of the modalities
-config["nb_channels"] = len(config["training_modalities"])
+config["nb_channels"] = len(config["training_modalities"])  # =4
 if "patch_shape" in config and config["patch_shape"] is not None:
     config["input_shape"] = tuple([config["nb_channels"]] + list(config["patch_shape"]))
 else:
@@ -47,6 +47,9 @@ config["overwrite"] = False  # If True, will previous files. If False, will use 
 
 
 def fetch_training_data_files(return_subject_ids=False):
+    """
+    返回训练文件列表
+    """
     training_data_files = list()
     subject_ids = list()
     for subject_dir in glob.glob(os.path.join(os.path.dirname(__file__), "data", "preprocessed", "*", "*")):
@@ -63,6 +66,7 @@ def fetch_training_data_files(return_subject_ids=False):
 
 def main(overwrite=False):
     # convert input images into an hdf5 file
+    # 若有则加载旧数据集，注意，此时image_shape为之前设置的
     if overwrite or not os.path.exists(config["data_file"]):
         training_files, subject_ids = fetch_training_data_files(return_subject_ids=True)
 
@@ -70,6 +74,7 @@ def main(overwrite=False):
                            subject_ids=subject_ids)
     data_file_opened = open_data_file(config["data_file"])
 
+    # 加载/创建模型文件
     if not overwrite and os.path.exists(config["model_file"]):
         model = load_old_model(config["model_file"])
     else:
@@ -79,6 +84,8 @@ def main(overwrite=False):
                                   n_base_filters=config["n_base_filters"])
 
     # get training and testing generators
+    # ../unet3d/generator.py
+    # 创建生成器(generator)，用于后面训练
     train_generator, validation_generator, n_train_steps, n_validation_steps = get_training_and_validation_generators(
         data_file_opened,
         batch_size=config["batch_size"],
@@ -99,6 +106,8 @@ def main(overwrite=False):
         augment_distortion_factor=config["distort"])
 
     # run training
+    # ../unet3d/training.py
+    # 训练一个keras模型
     train_model(model=model,
                 model_file=config["model_file"],
                 training_generator=train_generator,
