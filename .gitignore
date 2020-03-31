@@ -20,3 +20,4 @@ test_dir
 .DS_Store
 .vscode
 .idea
+brats/data/preprocessed
