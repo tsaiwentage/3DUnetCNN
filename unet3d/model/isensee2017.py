@@ -3,6 +3,7 @@ from functools import partial
 from keras.layers import Input, LeakyReLU, Add, UpSampling3D, Activation, SpatialDropout3D, Conv3D
 from keras.engine import Model
 from keras.optimizers import Adam
+import keras as k
 
 from .unet import create_convolution_block, concatenate
 from ..metrics import weighted_dice_coefficient_loss
@@ -72,7 +73,7 @@ def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5
         localization_output = create_localization_module(concatenation_layer, level_filters[level_number])
         current_layer = localization_output
         if level_number < n_segmentation_levels:  # 3
-            # ???是深度监督吗
+            # 记录层
             segmentation_layers.insert(0, Conv3D(n_labels, (1, 1, 1))(current_layer))
 
     output_layer = None
@@ -92,6 +93,7 @@ def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5
     model = Model(inputs=inputs, outputs=activation_block)
     model.compile(optimizer=optimizer(lr=initial_learning_rate), loss=loss_function)
     # 返回模型
+    k.utils.plot_model()
     return model
 
 
