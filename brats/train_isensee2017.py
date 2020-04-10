@@ -123,5 +123,5 @@ def main(overwrite=False):
 
 
 if __name__ == "__main__":
-    os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "2"
     main(overwrite=config["overwrite"])
