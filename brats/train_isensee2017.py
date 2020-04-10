@@ -82,6 +82,8 @@ def main(overwrite=False):
         model = isensee2017_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
                                   initial_learning_rate=config["initial_learning_rate"],
                                   n_base_filters=config["n_base_filters"])
+    import keras as k
+    k.utils.plot_model(model)
 
     # # get training and testing generators
     # # ../unet3d/generator.py
