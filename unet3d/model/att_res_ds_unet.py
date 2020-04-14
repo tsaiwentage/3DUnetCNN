@@ -65,11 +65,11 @@ def att_res_ds_unet_model(input_shape=(4, 128, 128, 128), n_base_filters=16, dep
 
     segmentation_layers = list()
     for level_number in range(depth - 2, -1, -1):  # [3,2,1,0]
-
+        # attention
         gating = gating_signal(level_output_layers[level_number + 1], level_filters[level_number], True)
         att = attention_block(level_output_layers[level_number], gating, level_filters[level_number])
 
-        # 上采样模块
+        # 上采样
         # 上采样放大一倍，卷积减少一半通道->conv_block
         up_sampling = create_up_sampling_module(current_layer, level_filters[level_number])
         # concat：skip connection
