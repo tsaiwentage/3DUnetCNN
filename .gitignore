@@ -20,5 +20,5 @@ test_dir
 .DS_Store
 .vscode
 .idea
-/.idea
 brats/data/preprocessed
+*.png
