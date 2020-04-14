@@ -83,44 +83,44 @@ def main(overwrite=False):
                                   initial_learning_rate=config["initial_learning_rate"],
                                   n_base_filters=config["n_base_filters"])
     from keras.utils.vis_utils import plot_model
-    plot_model(model, to_file='model-unet.png'，show_shapes = true)
+    plot_model(model, to_file='isensee_unet.png', show_shapes=True)
 
-    # # get training and testing generators
-    # # ../unet3d/generator.py
-    # # 创建生成器(generator)，用于后面训练
-    # train_generator, validation_generator, n_train_steps, n_validation_steps = get_training_and_validation_generators(
-    #     data_file_opened,
-    #     batch_size=config["batch_size"],
-    #     data_split=config["validation_split"],
-    #     overwrite=overwrite,
-    #     validation_keys_file=config["validation_file"],
-    #     training_keys_file=config["training_file"],
-    #     n_labels=config["n_labels"],
-    #     labels=config["labels"],
-    #     patch_shape=config["patch_shape"],
-    #     validation_batch_size=config["validation_batch_size"],
-    #     validation_patch_overlap=config["validation_patch_overlap"],
-    #     training_patch_start_offset=config["training_patch_start_offset"],
-    #     permute=config["permute"],
-    #     augment=config["augment"],
-    #     skip_blank=config["skip_blank"],
-    #     augment_flip=config["flip"],
-    #     augment_distortion_factor=config["distort"])
+    # get training and testing generators
+    # ../unet3d/generator.py
+    # 创建生成器(generator)，用于后面训练
+    train_generator, validation_generator, n_train_steps, n_validation_steps = get_training_and_validation_generators(
+        data_file_opened,
+        batch_size=config["batch_size"],
+        data_split=config["validation_split"],
+        overwrite=overwrite,
+        validation_keys_file=config["validation_file"],
+        training_keys_file=config["training_file"],
+        n_labels=config["n_labels"],
+        labels=config["labels"],
+        patch_shape=config["patch_shape"],
+        validation_batch_size=config["validation_batch_size"],
+        validation_patch_overlap=config["validation_patch_overlap"],
+        training_patch_start_offset=config["training_patch_start_offset"],
+        permute=config["permute"],
+        augment=config["augment"],
+        skip_blank=config["skip_blank"],
+        augment_flip=config["flip"],
+        augment_distortion_factor=config["distort"])
 
-    # # run training
-    # # ../unet3d/training.py
-    # # 训练一个keras模型
-    # train_model(model=model,
-    #             model_file=config["model_file"],
-    #             training_generator=train_generator,
-    #             validation_generator=validation_generator,
-    #             steps_per_epoch=n_train_steps,
-    #             validation_steps=n_validation_steps,
-    #             initial_learning_rate=config["initial_learning_rate"],
-    #             learning_rate_drop=config["learning_rate_drop"],
-    #             learning_rate_patience=config["patience"],
-    #             early_stopping_patience=config["early_stop"],
-    #             n_epochs=config["n_epochs"])
+    # run training
+    # ../unet3d/training.py
+    # 训练一个keras模型
+    train_model(model=model,
+                model_file=config["model_file"],
+                training_generator=train_generator,
+                validation_generator=validation_generator,
+                steps_per_epoch=n_train_steps,
+                validation_steps=n_validation_steps,
+                initial_learning_rate=config["initial_learning_rate"],
+                learning_rate_drop=config["learning_rate_drop"],
+                learning_rate_patience=config["patience"],
+                early_stopping_patience=config["early_stop"],
+                n_epochs=config["n_epochs"])
     data_file_opened.close()
 
 
