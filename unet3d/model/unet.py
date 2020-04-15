@@ -41,7 +41,7 @@ def unet_model_3d(input_shape, pool_size=(2, 2, 2), n_labels=1, initial_learning
     levels = list()
 
     # add levels with max pooling
-    for layer_depth in range(depth):
+    for layer_depth in range(depth):  # 4
         layer1 = create_convolution_block(input_layer=current_layer, n_filters=n_base_filters*(2**layer_depth),
                                           batch_normalization=batch_normalization)
         layer2 = create_convolution_block(input_layer=layer1, n_filters=n_base_filters*(2**layer_depth)*2,
@@ -49,7 +49,7 @@ def unet_model_3d(input_shape, pool_size=(2, 2, 2), n_labels=1, initial_learning
         if layer_depth < depth - 1:
             current_layer = MaxPooling3D(pool_size=pool_size)(layer2)
             levels.append([layer1, layer2, current_layer])
-        else:
+        else:  # 最下一层
             current_layer = layer2
             levels.append([layer1, layer2])
 
