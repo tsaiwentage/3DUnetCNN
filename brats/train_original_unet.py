@@ -127,11 +127,12 @@ def main(overwrite=False):
 
 if __name__ == "__main__":
     # GPU config
-    # import tensorflow as tf
-    # import keras.backend.tensorflow_backend as KTF
+    import tensorflow as tf
+    import keras.backend.tensorflow_backend as KTF
     os.environ["CUDA_VISIBLE_DEVICES"] = "2"
-    # config = tf.ConfigProto()
-    # config.gpu_options.allow_growth = True  # 不全部占满显存, 按需分配
-    # sess = tf.Session(config=config)
-    # KTF.set_session(sess)
+    gpuconfig = tf.ConfigProto()
+    gpuconfig.gpu_options.allow_growth = True  # 不全部占满显存, 按需分配
+    sess = tf.Session(config=gpuconfig)
+    KTF.set_session(sess)
+
     main(overwrite=config["overwrite"])
