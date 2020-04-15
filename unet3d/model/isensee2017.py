@@ -62,7 +62,6 @@ def isensee2017_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5
 
     segmentation_layers = list()
     for level_number in range(depth - 2, -1, -1):  # [3,2,1,0]
-        print(level_number)
         # 上采样模块
         # 上采样放大一倍，卷积减少一半通道->conv_block
         up_sampling = create_up_sampling_module(current_layer, level_filters[level_number])
