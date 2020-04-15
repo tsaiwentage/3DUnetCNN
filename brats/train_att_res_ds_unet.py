@@ -41,8 +41,8 @@ config["skip_blank"] = True  # if True, then patches without any target will be 
 
 config["data_file"] = os.path.abspath("brats_data.h5")
 config["model_file"] = os.path.abspath("att_res_ds_unet_model.h5")
-config["training_file"] = os.path.abspath("att_training_ids.pkl")
-config["validation_file"] = os.path.abspath("att_validation_ids.pkl")
+config["training_file"] = os.path.abspath("att_res_ds_unet_training_ids.pkl")
+config["validation_file"] = os.path.abspath("att_res_ds_unet_validation_ids.pkl")
 config["overwrite"] = False  # If True, will previous files. If False, will use previously written files.
 
 

@@ -78,7 +78,7 @@ def att_res_ds_unet_model(input_shape=(4, 128, 128, 128), n_base_filters=16, dep
         # concat后两次卷积channel减半
         localization_output = create_localization_module(concatenation_layer, level_filters[level_number])
         current_layer = localization_output
-        if level_number < n_segmentation_levels:  # 3
+        if level_number < n_segmentation_levels:  # <3; [2,1,0]时记录
             # 记录层
             segmentation_layers.insert(0, Conv3D(n_labels, (1, 1, 1))(current_layer))
 
