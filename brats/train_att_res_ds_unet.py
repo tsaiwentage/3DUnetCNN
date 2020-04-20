@@ -39,10 +39,10 @@ config["validation_patch_overlap"] = 0  # if > 0, during training, validation pa
 config["training_patch_start_offset"] = (16, 16, 16)  # randomly offset the first patch index by up to this offset
 config["skip_blank"] = True  # if True, then patches without any target will be skipped
 
-config["data_file"] = os.path.abspath("brats_data.h5")
-config["model_file"] = os.path.abspath("att_res_ds_unet_model.h5")
-config["training_file"] = os.path.abspath("att_res_ds_unet_training_ids.pkl")
-config["validation_file"] = os.path.abspath("att_res_ds_unet_validation_ids.pkl")
+config["data_file"] = os.path.abspath("isensee_brats_data.h5")
+config["model_file"] = os.path.abspath("att_isensee_model.h5")
+config["training_file"] = os.path.abspath("isensee_training_ids.pkl")
+config["validation_file"] = os.path.abspath("isensee_validation_ids.pkl")
 config["overwrite"] = False  # If True, will previous files. If False, will use previously written files.
 
 
