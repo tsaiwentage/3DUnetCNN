@@ -129,7 +129,7 @@ if __name__ == "__main__":
     import tensorflow as tf
     import keras.backend.tensorflow_backend as KTF
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
     gpuconfig = tf.ConfigProto()
     gpuconfig.gpu_options.allow_growth = True  # 不全部占满显存, 按需分配
     sess = tf.Session(config=gpuconfig)
