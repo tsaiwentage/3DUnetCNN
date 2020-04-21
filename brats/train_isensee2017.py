@@ -135,3 +135,6 @@ if __name__ == "__main__":
     sess = tf.Session(config=gpuconfig)
     KTF.set_session(sess)
     main(overwrite=config["overwrite"])
+
+    # this is a test
+
