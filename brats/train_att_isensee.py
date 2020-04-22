@@ -3,7 +3,7 @@ import glob
 
 from unet3d.data import write_data_to_file, open_data_file
 from unet3d.generator import get_training_and_validation_generators
-from unet3d.model import att_res_ds_unet
+from unet3d.model import att_isensee
 from unet3d.training import load_old_model, train_model
 
 
@@ -79,11 +79,11 @@ def main(overwrite=False):
         model = load_old_model(config["model_file"])
     else:
         # instantiate new model
-        model = att_res_ds_unet.att_res_ds_unet_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
-                                                      initial_learning_rate=config["initial_learning_rate"],
-                                                      n_base_filters=config["n_base_filters"])
+        model = att_isensee.att_isensee_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
+                                              initial_learning_rate=config["initial_learning_rate"],
+                                              n_base_filters=config["n_base_filters"])
     from keras.utils.vis_utils import plot_model
-    plot_model(model, to_file='att_res_ds_uet.png', show_shapes=True)
+    plot_model(model, to_file='att_isensee_uet.png', show_shapes=True)
 
     # get training and testing generators
     # ../unet3d/generator.py

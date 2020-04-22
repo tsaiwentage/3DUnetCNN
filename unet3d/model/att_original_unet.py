@@ -4,7 +4,7 @@ from keras.optimizers import Adam
 
 from .unet import create_convolution_block, concatenate, get_up_convolution
 from ..metrics import dice_coefficient_loss, dice_coefficient
-from .att_res_ds_unet import gating_signal, expend_as, attention_block
+from .att_isensee import gating_signal, expend_as, attention_block
 
 
 def att_original_unet_model(input_shape, pool_size=(2, 2, 2), n_labels=1, initial_learning_rate=0.00001,
