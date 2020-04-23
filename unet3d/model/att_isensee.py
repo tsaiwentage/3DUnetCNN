@@ -175,6 +175,7 @@ def attention_block(x, gating, inter_shape, res=False):
     y = multiply([upsample_psi, x])
     if res:
         y = Add()([y, x])
+        y = LeakyReLU()(y)
     result = Conv3D(shape_x[1], (1, 1, 1), padding='same')(y)
     # result_bn = BatchNormalization()(result)
     # return result_bn
