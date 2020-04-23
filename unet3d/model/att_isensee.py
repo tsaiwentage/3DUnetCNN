@@ -180,6 +180,7 @@ def attention_block(x, gating, inter_shape, res=False):
     # result_bn = BatchNormalization()(result)
     # return result_bn
     result_in = InstanceNormalization(axis=1)(result)
+    result_in = LeakyReLU()(result_in)
     return result_in
 
 
