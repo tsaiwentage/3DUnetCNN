@@ -16,7 +16,7 @@ create_convolution_block = partial(create_convolution_block, activation=LeakyReL
 
 def att_isensee_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, dropout_rate=0.3,
                       n_segmentation_levels=3, n_labels=4, optimizer=Adam, initial_learning_rate=5e-4,
-                      loss_function=weighted_dice_coefficient_loss, activation_name="sigmoid"):
+                      loss_function=weighted_dice_coefficient_loss, activation_name="sigmoid", res=False):
     """
     This function builds a model proposed by Isensee et al. for the BRATS 2017 competition:
     https://www.cbica.upenn.edu/sbia/Spyridon.Bakas/MICCAI_BraTS/MICCAI_BraTS_2017_proceedings_shortPapers.pdf
@@ -67,7 +67,7 @@ def att_isensee_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5
     for level_number in range(depth - 2, -1, -1):  # [3,2,1,0]
         # attention
         gating = gating_signal(level_output_layers[level_number + 1], level_filters[level_number], True)
-        att = attention_block(level_output_layers[level_number], gating, level_filters[level_number])
+        att = attention_block(level_output_layers[level_number], gating, level_filters[level_number], res=res)
 
         # 上采样
         # 上采样放大一倍，卷积减少一半通道->conv_block
@@ -146,7 +146,7 @@ def expend_as(tensor, rep):
     return Lambda(lambda x, repnum: K.repeat_elements(x, repnum, axis=1), arguments={'repnum': rep})(tensor)
 
 
-def attention_block(x, gating, inter_shape):
+def attention_block(x, gating, inter_shape, res=False):
     shape_x = K.int_shape(x)
     shape_g = K.int_shape(gating)
 
@@ -169,7 +169,8 @@ def attention_block(x, gating, inter_shape):
     upsample_psi = expend_as(upsample_psi, shape_x[1])
 
     y = multiply([upsample_psi, x])
-
+    if res:
+        y = Add()([y, x])
     result = Conv3D(shape_x[1], (1, 1, 1), padding='same')(y)
     result_bn = BatchNormalization()(result)
     return result_bn
