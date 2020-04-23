@@ -4,6 +4,7 @@ from keras.layers import Input, LeakyReLU, Add, UpSampling3D, Activation, Spatia
     BatchNormalization, Conv3DTranspose, multiply, Lambda, Reshape
 from keras.engine import Model
 from keras.optimizers import Adam
+from keras_contrib.layers.normalization.instancenormalization import InstanceNormalization
 
 from .unet import create_convolution_block, concatenate
 from ..metrics import weighted_dice_coefficient_loss
@@ -137,7 +138,8 @@ def gating_signal(input, out_size, batch_norm=False):
     """
     x = Conv3D(out_size, (1, 1, 1), padding='same')(input)
     if batch_norm:
-        x = BatchNormalization()(x)
+        # x = BatchNormalization()(x)
+        x = InstanceNormalization(axis=1)(x)
     # x = Activation('relu')(x)
     x = LeakyReLU()(x)
     return x
@@ -174,8 +176,10 @@ def attention_block(x, gating, inter_shape, res=False):
     if res:
         y = Add()([y, x])
     result = Conv3D(shape_x[1], (1, 1, 1), padding='same')(y)
-    result_bn = BatchNormalization()(result)
-    return result_bn
+    # result_bn = BatchNormalization()(result)
+    # return result_bn
+    result_in = InstanceNormalization(axis=1)(result)
+    return result_in
 
 
 
