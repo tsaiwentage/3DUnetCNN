@@ -138,7 +138,8 @@ def gating_signal(input, out_size, batch_norm=False):
     x = Conv3D(out_size, (1, 1, 1), padding='same')(input)
     if batch_norm:
         x = BatchNormalization()(x)
-    x = Activation('relu')(x)
+    # x = Activation('relu')(x)
+    x = LeakyReLU()(x)
     return x
 
 
@@ -160,7 +161,8 @@ def attention_block(x, gating, inter_shape, res=False):
                                  padding='same')(phi_g)
 
     concat_xg = Add()([upsample_g, theta_x])
-    act_xg = Activation('relu')(concat_xg)
+    # act_xg = Activation('relu')(concat_xg)
+    act_xg = LeakyReLU()(concat_xg)
     psi = Conv3D(1, (1, 1, 1), padding='same')(act_xg)
     sigmoid_xg = Activation('sigmoid')(psi)
     shape_sigmoid = K.int_shape(sigmoid_xg)

@@ -39,7 +39,7 @@ config["validation_patch_overlap"] = 0  # if > 0, during training, validation pa
 config["training_patch_start_offset"] = (16, 16, 16)  # randomly offset the first patch index by up to this offset
 config["skip_blank"] = True  # if True, then patches without any target will be skipped
 
-config["res"] = True
+config["res"] = False
 if config["res"]:
     config["model_file"] = os.path.abspath("att_res_isensee_model.h5")
 else:
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     import tensorflow as tf
     import keras.backend.tensorflow_backend as KTF
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "2"
     gpuconfig = tf.ConfigProto()
     gpuconfig.gpu_options.allow_growth = True  # 不全部占满显存, 按需分配
     sess = tf.Session(config=gpuconfig)
