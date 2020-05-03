@@ -136,5 +136,3 @@ if __name__ == "__main__":
     KTF.set_session(sess)
     main(overwrite=config["overwrite"])
 
-    # this is a test
-
