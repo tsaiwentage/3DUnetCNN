@@ -1,10 +1,13 @@
 # 5层深度，加上残差和dropout，leaky relu，学习率0.0005
 import os
 import glob
+import sys
 
 from unet3d.data import write_data_to_file, open_data_file
 from unet3d.generator import get_training_and_validation_generators
-from unet3d.model.isensee_2 import isensee_2_model
+sys.path.append("/data/test/3DUnetCNN_2/unet3d/model/isensee_2.py")
+import isensee_2
+# from unet3d.model.isensee_2 import isensee_2_model
 from unet3d.training import load_old_model, train_model
 
 
@@ -82,7 +85,7 @@ def main(overwrite=False):
         model = load_old_model(config["model_file"])
     else:
         # instantiate new model
-        model = isensee_2_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
+        model = isensee_2.isensee_2_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
                                 initial_learning_rate=config["initial_learning_rate"],
                                 n_base_filters=config["n_base_filters"],
                                 depth=5)
