@@ -85,7 +85,7 @@ def main(overwrite=False):
         model = isensee_1.isensee_1_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
                                           initial_learning_rate=config["initial_learning_rate"],
                                           n_base_filters=config["n_base_filters"],
-                                          depth=4)
+                                          depth=5)
         plot_model(model, to_file='isensee_1_uet.png', show_shapes=True)
 
         model.summary()
