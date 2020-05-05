@@ -8,7 +8,7 @@ from .unet import create_convolution_block, concatenate
 from ..metrics import weighted_dice_coefficient_loss
 
 # 携带部分参数生成一个新函数
-create_convolution_block = partial(create_convolution_block, instance_normalization=False)
+create_convolution_block = partial(create_convolution_block, activation=LeakyReLU, instance_normalization=True)
 
 
 def isensee_2_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, dropout_rate=0.3,

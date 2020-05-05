@@ -1,4 +1,4 @@
-# 5层深度，加上残差和dropout，学习率0.0005
+# 5层深度，加上残差和dropout，leaky relu，学习率0.0005
 import os
 import glob
 
