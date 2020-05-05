@@ -1,4 +1,4 @@
-# original
+# 5层深度，其余什么都没有，学习率0.00001
 import os
 import glob
 
