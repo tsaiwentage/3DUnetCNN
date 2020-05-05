@@ -76,6 +76,7 @@ def main(overwrite=False):
 
     from keras.utils.vis_utils import plot_model
     plot_model(model, to_file='original_uet.png', show_shapes=True)
+    model.summary()
 
     # get training and testing generators
     train_generator, validation_generator, n_train_steps, n_validation_steps = get_training_and_validation_generators(
