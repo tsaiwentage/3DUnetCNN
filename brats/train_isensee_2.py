@@ -5,7 +5,7 @@ import sys
 
 from unet3d.data import write_data_to_file, open_data_file
 from unet3d.generator import get_training_and_validation_generators
-from unet3d.model.isensee_2 import isensee_3_model
+from unet3d.model.isensee_1_2 import isensee_2_model
 from unet3d.training import load_old_model, train_model
 
 
@@ -42,7 +42,7 @@ config["training_patch_start_offset"] = (16, 16, 16)  # randomly offset the firs
 config["skip_blank"] = True  # if True, then patches without any target will be skipped
 
 
-config["model_file"] = os.path.abspath("isensee_3_model.h5")
+config["model_file"] = os.path.abspath("isensee_2_model.h5")
 config["data_file"] = os.path.abspath("isensee_brats_data.h5")
 config["training_file"] = os.path.abspath("isensee_training_ids.pkl")
 config["validation_file"] = os.path.abspath("isensee_validation_ids.pkl")
@@ -83,7 +83,7 @@ def main(overwrite=False):
         model = load_old_model(config["model_file"])
     else:
         # instantiate new model
-        model = isensee_3_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
+        model = isensee_2_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
                                 initial_learning_rate=config["initial_learning_rate"],
                                 n_base_filters=config["n_base_filters"],
                                 depth=5)
