@@ -1,11 +1,10 @@
-# 5层深度，加上残差和dropout，leaky relu，学习率0.0005
+# 5层深度，其余什么都没有，学习率0.00001，加att
 import os
 import glob
-import sys
 
 from unet3d.data import write_data_to_file, open_data_file
 from unet3d.generator import get_training_and_validation_generators
-from unet3d.model.isensee_1_2 import isensee_2_model
+from unet3d.model import isensee_2
 from unet3d.training import load_old_model, train_model
 
 
@@ -68,14 +67,14 @@ def fetch_training_data_files(return_subject_ids=False):
 
 
 def main(overwrite=False):
-    # convert input images into an hdf5 file
-    # 若有则加载旧数据集，注意，此时image_shape为之前设置的
-    if overwrite or not os.path.exists(config["data_file"]):
-        training_files, subject_ids = fetch_training_data_files(return_subject_ids=True)
-
-        write_data_to_file(training_files, config["data_file"], image_shape=config["image_shape"],
-                           subject_ids=subject_ids)
-    data_file_opened = open_data_file(config["data_file"])
+    # # convert input images into an hdf5 file
+    # # 若有则加载旧数据集，注意，此时image_shape为之前设置的
+    # if overwrite or not os.path.exists(config["data_file"]):
+    #     training_files, subject_ids = fetch_training_data_files(return_subject_ids=True)
+    #
+    #     write_data_to_file(training_files, config["data_file"], image_shape=config["image_shape"],
+    #                        subject_ids=subject_ids)
+    # data_file_opened = open_data_file(config["data_file"])
 
     # 加载/创建模型文件
     from keras.utils.vis_utils import plot_model
@@ -83,51 +82,51 @@ def main(overwrite=False):
         model = load_old_model(config["model_file"])
     else:
         # instantiate new model
-        model = isensee_2_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
-                                initial_learning_rate=config["initial_learning_rate"],
-                                n_base_filters=config["n_base_filters"],
-                                depth=5)
+        model = isensee_2.isensee_2_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
+                                          initial_learning_rate=config["initial_learning_rate"],
+                                          n_base_filters=config["n_base_filters"],
+                                          depth=5)
         plot_model(model, to_file='isensee_2_uet.png', show_shapes=True)
 
         model.summary()
 
-    # get training and testing generators
-    # ../unet3d/generator.py
-    # 创建生成器(generator)，用于后面训练
-    train_generator, validation_generator, n_train_steps, n_validation_steps = get_training_and_validation_generators(
-        data_file_opened,
-        batch_size=config["batch_size"],
-        data_split=config["validation_split"],
-        overwrite=overwrite,
-        validation_keys_file=config["validation_file"],
-        training_keys_file=config["training_file"],
-        n_labels=config["n_labels"],
-        labels=config["labels"],
-        patch_shape=config["patch_shape"],
-        validation_batch_size=config["validation_batch_size"],
-        validation_patch_overlap=config["validation_patch_overlap"],
-        training_patch_start_offset=config["training_patch_start_offset"],
-        permute=config["permute"],
-        augment=config["augment"],
-        skip_blank=config["skip_blank"],
-        augment_flip=config["flip"],
-        augment_distortion_factor=config["distort"])
-
-    # run training
-    # ../unet3d/training.py
-    # 训练一个keras模型
-    train_model(model=model,
-                model_file=config["model_file"],
-                training_generator=train_generator,
-                validation_generator=validation_generator,
-                steps_per_epoch=n_train_steps,
-                validation_steps=n_validation_steps,
-                initial_learning_rate=config["initial_learning_rate"],
-                learning_rate_drop=config["learning_rate_drop"],
-                learning_rate_patience=config["patience"],
-                early_stopping_patience=config["early_stop"],
-                n_epochs=config["n_epochs"])
-    data_file_opened.close()
+    # # get training and testing generators
+    # # ../unet3d/generator.py
+    # # 创建生成器(generator)，用于后面训练
+    # train_generator, validation_generator, n_train_steps, n_validation_steps = get_training_and_validation_generators(
+    #     data_file_opened,
+    #     batch_size=config["batch_size"],
+    #     data_split=config["validation_split"],
+    #     overwrite=overwrite,
+    #     validation_keys_file=config["validation_file"],
+    #     training_keys_file=config["training_file"],
+    #     n_labels=config["n_labels"],
+    #     labels=config["labels"],
+    #     patch_shape=config["patch_shape"],
+    #     validation_batch_size=config["validation_batch_size"],
+    #     validation_patch_overlap=config["validation_patch_overlap"],
+    #     training_patch_start_offset=config["training_patch_start_offset"],
+    #     permute=config["permute"],
+    #     augment=config["augment"],
+    #     skip_blank=config["skip_blank"],
+    #     augment_flip=config["flip"],
+    #     augment_distortion_factor=config["distort"])
+    #
+    # # run training
+    # # ../unet3d/training.py
+    # # 训练一个keras模型
+    # train_model(model=model,
+    #             model_file=config["model_file"],
+    #             training_generator=train_generator,
+    #             validation_generator=validation_generator,
+    #             steps_per_epoch=n_train_steps,
+    #             validation_steps=n_validation_steps,
+    #             initial_learning_rate=config["initial_learning_rate"],
+    #             learning_rate_drop=config["learning_rate_drop"],
+    #             learning_rate_patience=config["patience"],
+    #             early_stopping_patience=config["early_stop"],
+    #             n_epochs=config["n_epochs"])
+    # data_file_opened.close()
 
 
 if __name__ == "__main__":

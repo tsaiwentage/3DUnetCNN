@@ -1,14 +1,18 @@
 from functools import partial
 
-from keras.layers import Input, LeakyReLU, Add, UpSampling3D, Activation, SpatialDropout3D, Conv3D
+from keras.layers import Input, LeakyReLU, Add, UpSampling3D, Activation, SpatialDropout3D, Conv3D, \
+    BatchNormalization, Conv3DTranspose, multiply, Lambda, Reshape
 from keras.engine import Model
 from keras.optimizers import Adam
+from keras_contrib.layers.normalization.instancenormalization import InstanceNormalization
 
 from .unet import create_convolution_block, concatenate
 from ..metrics import weighted_dice_coefficient_loss
 
+from keras import backend as K
+
 # 携带部分参数生成一个新函数
-create_convolution_block = partial(create_convolution_block, activation=LeakyReLU, instance_normalization=True)
+create_convolution_block = partial(create_convolution_block, instance_normalization=False)
 
 
 def isensee_2_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, dropout_rate=0.3,
@@ -56,17 +60,20 @@ def isensee_2_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, 
         context_output_layer = create_context_module(in_conv, n_level_filters, dropout_rate=dropout_rate)
 
         # 残差模块：残差单元+in_conv
-        summation_layer = Add()([in_conv, context_output_layer])
-        level_output_layers.append(summation_layer)
-        current_layer = summation_layer
+        level_output_layers.append(context_output_layer)
+        current_layer = context_output_layer
 
     segmentation_layers = list()
     for level_number in range(depth - 2, -1, -1):  # [3,2,1,0]
+        # attention
+        gating = gating_signal(level_output_layers[level_number + 1], level_filters[level_number], True)
+        att = attention_block(level_output_layers[level_number], gating, level_filters[level_number])
+
         # 上采样模块
         # 上采样放大一倍，卷积减少一半通道->conv_block
         up_sampling = create_up_sampling_module(current_layer, level_filters[level_number])
         # concat：skip connection
-        concatenation_layer = concatenate([level_output_layers[level_number], up_sampling], axis=1)
+        concatenation_layer = concatenate([att, up_sampling], axis=1)
         # concat后两次卷积channel减半
         localization_output = create_localization_module(concatenation_layer, level_filters[level_number])
         current_layer = localization_output
@@ -99,9 +106,61 @@ def create_up_sampling_module(input_layer, n_filters, size=(2, 2, 2)):
 def create_context_module(input_layer, n_level_filters, dropout_rate=0.3, data_format="channels_first"):
     # 残差单元：conv_block->dropout->conv_block
     convolution1 = create_convolution_block(input_layer=input_layer, n_filters=n_level_filters)
-    dropout = SpatialDropout3D(rate=dropout_rate, data_format=data_format)(convolution1)
-    convolution2 = create_convolution_block(input_layer=dropout, n_filters=n_level_filters)
+    convolution2 = create_convolution_block(input_layer=convolution1, n_filters=n_level_filters)
     return convolution2
 
+def gating_signal(input, out_size, batch_norm=False):
+    """
+    resize the down layer feature map into the same dimension as the up layer feature map
+    using 1x1 conv
+    :param input:   down-dim feature map
+    :param out_size:output channel number
+    :return: the gating feature map with the same dimension of the up layer feature map
+    """
+    x = Conv3D(out_size, (1, 1, 1), padding='same')(input)
+    if batch_norm:
+        # x = BatchNormalization()(x)
+        x = InstanceNormalization(axis=1)(x)
+    # x = Activation('relu')(x)
+    x = LeakyReLU()(x)
+    return x
 
+
+def expend_as(tensor, rep):
+    return Lambda(lambda x, repnum: K.repeat_elements(x, repnum, axis=1), arguments={'repnum': rep})(tensor)
+
+
+def attention_block(x, gating, inter_shape, res=False):
+    shape_x = K.int_shape(x)
+    shape_g = K.int_shape(gating)
+
+    theta_x = Conv3D(inter_shape, (2, 2, 2), strides=(2, 2, 2), padding='same')(x)  # 16
+    shape_theta_x = K.int_shape(theta_x)
+
+    phi_g = Conv3D(inter_shape, (1, 1, 1), padding='same')(gating)
+    upsample_g = Conv3DTranspose(inter_shape, (3, 3, 3),
+                                 strides=(shape_theta_x[2] // shape_g[2], shape_theta_x[3] // shape_g[3],
+                                          shape_theta_x[4] // shape_g[4]),
+                                 padding='same')(phi_g)
+
+    concat_xg = Add()([upsample_g, theta_x])
+    # act_xg = Activation('relu')(concat_xg)
+    act_xg = LeakyReLU()(concat_xg)
+    psi = Conv3D(1, (1, 1, 1), padding='same')(act_xg)
+    sigmoid_xg = Activation('sigmoid')(psi)
+    shape_sigmoid = K.int_shape(sigmoid_xg)
+    upsample_psi = UpSampling3D(size=(shape_x[2] // shape_sigmoid[2], shape_x[3] // shape_sigmoid[3],
+                                      shape_x[4] // shape_sigmoid[4]))(sigmoid_xg)
+    upsample_psi = expend_as(upsample_psi, shape_x[1])
+
+    y = multiply([upsample_psi, x])
+    if res:
+        y = Add()([y, x])
+        y = LeakyReLU()(y)
+    result = Conv3D(shape_x[1], (1, 1, 1), padding='same')(y)
+    # result_bn = BatchNormalization()(result)
+    # return result_bn
+    result_in = InstanceNormalization(axis=1)(result)
+    result_act = LeakyReLU()(result_in)
+    return result_act
 
