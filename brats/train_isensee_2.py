@@ -4,7 +4,7 @@ import glob
 
 from unet3d.data import write_data_to_file, open_data_file
 from unet3d.generator import get_training_and_validation_generators
-from unet3d.model import isensee_2
+from unet3d.model.isensee_2 import isensee_2_model
 from unet3d.training import load_old_model, train_model
 
 
@@ -82,10 +82,10 @@ def main(overwrite=False):
         model = load_old_model(config["model_file"])
     else:
         # instantiate new model
-        model = isensee_2.isensee_2_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
-                                          initial_learning_rate=config["initial_learning_rate"],
-                                          n_base_filters=config["n_base_filters"],
-                                          depth=5)
+        model = isensee_2_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
+                                initial_learning_rate=config["initial_learning_rate"],
+                                n_base_filters=config["n_base_filters"],
+                                depth=5)
         plot_model(model, to_file='isensee_2_uet.png', show_shapes=True)
 
         model.summary()
