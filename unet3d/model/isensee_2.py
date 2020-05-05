@@ -11,7 +11,7 @@ from ..metrics import weighted_dice_coefficient_loss
 create_convolution_block = partial(create_convolution_block, activation=LeakyReLU, instance_normalization=True)
 
 
-def isensee_2_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, dropout_rate=0.3,
+def isensee_3_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, dropout_rate=0.3,
                     n_segmentation_levels=3, n_labels=4, optimizer=Adam, initial_learning_rate=5e-4,
                     loss_function=weighted_dice_coefficient_loss, activation_name="sigmoid"):
     """
