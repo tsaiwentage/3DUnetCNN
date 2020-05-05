@@ -41,7 +41,7 @@ config["training_patch_start_offset"] = (16, 16, 16)  # randomly offset the firs
 config["skip_blank"] = True  # if True, then patches without any target will be skipped
 
 
-config["model_file"] = os.path.abspath("isensee_1_model.h5")
+config["model_file"] = os.path.abspath("isensee_2_model.h5")
 config["data_file"] = os.path.abspath("isensee_brats_data.h5")
 config["training_file"] = os.path.abspath("isensee_training_ids.pkl")
 config["validation_file"] = os.path.abspath("isensee_validation_ids.pkl")
