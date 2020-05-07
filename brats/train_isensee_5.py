@@ -1,10 +1,10 @@
-# 5层深度，其余什么都没有，学习率5e-4，加att，深度监督，leaky relu
+# 5层深度，其余什么都没有，学习率5e-4，加att，res+dropout，leaky relu，深度监督
 import os
 import glob
 
 from unet3d.data import write_data_to_file, open_data_file
 from unet3d.generator import get_training_and_validation_generators
-from unet3d.model import isensee_4
+from unet3d.model import isensee_5
 from unet3d.training import load_old_model, train_model
 
 
@@ -41,7 +41,7 @@ config["training_patch_start_offset"] = (16, 16, 16)  # randomly offset the firs
 config["skip_blank"] = True  # if True, then patches without any target will be skipped
 
 
-config["model_file"] = os.path.abspath("isensee_4_model.h5")
+config["model_file"] = os.path.abspath("isensee_5_model.h5")
 config["data_file"] = os.path.abspath("isensee_brats_data.h5")
 config["training_file"] = os.path.abspath("isensee_training_ids.pkl")
 config["validation_file"] = os.path.abspath("isensee_validation_ids.pkl")
@@ -82,11 +82,11 @@ def main(overwrite=False):
         model = load_old_model(config["model_file"])
     else:
         # instantiate new model
-        model = isensee_4.isensee_4_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
+        model = isensee_5.isensee_5_model(input_shape=config["input_shape"], n_labels=config["n_labels"],
                                           initial_learning_rate=config["initial_learning_rate"],
                                           n_base_filters=config["n_base_filters"],
                                           depth=5)
-        plot_model(model, to_file='isensee_4_uet.png', show_shapes=True)
+        plot_model(model, to_file='isensee_5_uet.png', show_shapes=True)
 
         model.summary()
 
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     import tensorflow as tf
     import keras.backend.tensorflow_backend as KTF
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     gpuconfig = tf.ConfigProto()
     gpuconfig.gpu_options.allow_growth = True  # 不全部占满显存, 按需分配
     sess = tf.Session(config=gpuconfig)
