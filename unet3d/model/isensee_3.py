@@ -60,8 +60,9 @@ def isensee_3_model(input_shape=(4, 128, 128, 128), n_base_filters=16, depth=5, 
         context_output_layer = create_context_module(in_conv, n_level_filters, dropout_rate=dropout_rate)
 
         # 残差模块：残差单元+in_conv
-        level_output_layers.append(context_output_layer)
-        current_layer = context_output_layer
+        summation_layer = Add()([in_conv, context_output_layer])
+        level_output_layers.append(summation_layer)
+        current_layer = summation_layer
 
     segmentation_layers = list()
     for level_number in range(depth - 2, -1, -1):  # [3,2,1,0]
