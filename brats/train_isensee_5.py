@@ -1,4 +1,4 @@
-# 5层深度，其余什么都没有，学习率5e-4，加att，res+dropout，leaky relu，深度监督
+# 5层深度，学习率5e-4，加att，res+dropout，leaky relu，深度监督
 import os
 import glob
 
